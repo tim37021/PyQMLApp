@@ -33,7 +33,7 @@ class App(object):
         # Create QML engine
         engine = QQmlApplicationEngine()
 
-        plugin_dir = path / 'plugin'
+        plugin_dir = path / 'plugins'
         imports_dir = path / 'imports'
         entry_path = path / 'src' / 'main.qml'
         if os.path.isdir(str(plugin_dir)):
@@ -49,7 +49,7 @@ class App(object):
         engine.addImportPath(str(imports_dir))
 
         # Load the qml file into the engine
-        debug_print('Start from entry %s'%str(entry_path))
+        debug_print('Start from entry %s' % str(entry_path))
         engine.load(str(entry_path))
 
         # Qml file error handling
@@ -57,6 +57,27 @@ class App(object):
             sys.exit(-1)
 
         return app.exec_()
+
+
+def boilerplate(path):
+    if not os.path.isdir(str(path / 'imports')):
+        os.mkdir(str(path / 'imports'))
+    if not os.path.isdir(str(path / 'plugins')):
+        os.mkdir(str(path / 'plugins'))
+    if not os.path.isdir(str(path / 'src')):
+        os.mkdir(str(path / 'src'))
+    with open(str(path / 'src' / 'main.qml'), 'w') as f:
+        f.write("""import QtQuick 2.12
+import QtQuick.Controls 2.12
+
+ApplicationWindow {
+    width: 800
+    height: 600
+    visible: true
+    title: 'PyQMLApp'
+}
+"""
+        )
 
 
 def run():
@@ -72,5 +93,8 @@ def run():
     path = pathlib.Path(args.path)
     if args.verbose:
         params['verbose'] = True
+    if args.boilerplate:
+        boilerplate(path)
+        sys.exit(0)
     app = App(sys.argv)
     sys.exit(app.run(path))
