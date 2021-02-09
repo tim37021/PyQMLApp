@@ -36,6 +36,8 @@ class App(object):
         plugin_dir = path / 'plugins'
         imports_dir = path / 'imports'
         entry_path = path / 'src' / 'main.qml'
+        
+        sys.path.append(str(plugin_dir))
         if os.path.isdir(str(plugin_dir)):
             plugins = scan_plugins(str(plugin_dir))
             # install all
